@@ -19,13 +19,13 @@ app.use(express.json());
 // CORS Configuration
 const allowedOrigins = process.env.NODE_ENV === 'production' 
   ? [
-      'https://foodscuz-fnd.vercel.app',
+      'https://col-uti-hub-fnd.vercel.app',
     ]
   : [
       'http://localhost:5173',
       'http://localhost:5174',
       'http://localhost:3000',
-      'https://foodscuz-fnd.vercel.app', // Allow production frontend too
+      'https://col-uti-hub-fnd.vercel.app', // Allow production frontend too
     ];
 
 app.use(cors({
