@@ -19,7 +19,7 @@ app.use(express.json());
 // Enable CORS
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? 'https://your-frontend-domain.com' 
+    ? 'https://college-utility-hub-bcn.vercel.app/' 
     : 'http://localhost:5173',
   credentials: true
 }));
