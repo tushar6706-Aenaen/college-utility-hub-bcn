@@ -1,0 +1,15 @@
+[
+  {
+    "name": "Super Admin",
+    "email": "admin@college.com",
+    "password": "change_this_password",
+    "department": "Administration"
+  },
+  {
+    "name": "Academic Admin",
+    "email": "academic@college.com",
+    "password": "change_this_password",
+    "department": "Academics"
+  }
+]
+
