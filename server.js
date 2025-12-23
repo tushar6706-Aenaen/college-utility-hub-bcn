@@ -72,7 +72,13 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
-
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'API is running',
+    timestamp: new Date().toISOString()
+  });
+});
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({
