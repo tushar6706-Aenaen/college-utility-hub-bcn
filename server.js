@@ -17,13 +17,33 @@ const app = express();
 app.use(express.json());
 
 // CORS Configuration
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'https://col-uti-hub-fnd.vercel.app', // ✅ Your actual frontend URL
+  'https://college-utility-hub-fnd.vercel.app', // Keep old one just in case
+];
 
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? 'https://col-uti-hub-fnd.vercel.app' 
-    : 'http://localhost:5173',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      console.log('✅ Allowed origin:', origin);
+      callback(null, true);
+    } else {
+      console.log('❌ Blocked origin:', origin);
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
+    }
+  },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+// Handle preflight requests
+app.options('*', cors());
 
 
 
