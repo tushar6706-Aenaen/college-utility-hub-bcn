@@ -17,35 +17,39 @@ const app = express();
 app.use(express.json());
 
 // CORS Configuration
-const allowedOrigins = process.env.NODE_ENV === 'production' 
-  ? [
-      'https://col-uti-hub-fnd.vercel.app',
-    ]
-  : [
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'http://localhost:3000',
-      'https://col-uti-hub-fnd.vercel.app', // Allow production frontend too
-    ];
+const exactOrigins = [
+  'https://col-uti-hub-fnd.vercel.app',
+  'https://col-uti-hub-fnd.vercel.app/', // tolerate trailing slash
+  'https://college-utility-hub-bcn.vercel.app',
+  'https://college-utility-hub-bcn.vercel.app/', // tolerate trailing slash
+];
 
-app.use(cors({
+const localhostOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:3000',
+];
+
+const vercelRegex = /^https:\/\/[a-z0-9-]+\.vercel\.app\/?$/i;
+
+const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log('❌ Blocked by CORS:', origin);
-      callback(null, false);
-    }
+    if (!origin) return callback(null, true); // non-browser or same-origin
+    if (exactOrigins.includes(origin)) return callback(null, true);
+    if (localhostOrigins.includes(origin)) return callback(null, true);
+    if (vercelRegex.test(origin)) return callback(null, true); // allow any vercel.app frontend
+    console.log('❌ Blocked by CORS:', origin);
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+};
 
-// Handle preflight requests explicitly
-app.options('*', cors());
+app.use(cors(corsOptions));
+
+// Handle preflight requests explicitly with the same options
+app.options('*', cors(corsOptions));
 
 // Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
@@ -62,7 +66,7 @@ app.use('/api/stats', require('./routes/stats'));
 
 // Health check route
 app.get('/api/health', (req, res) => {
-  res.json({ 
+  res.json({
     success: true, 
     message: 'API is running',
     timestamp: new Date().toISOString()
